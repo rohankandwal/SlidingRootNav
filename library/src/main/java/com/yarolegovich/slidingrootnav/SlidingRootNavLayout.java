@@ -66,7 +66,7 @@ public class SlidingRootNavLayout extends FrameLayout implements SlidingRootNav 
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         return (!isMenuLocked
             && dragHelper.shouldInterceptTouchEvent(ev))
-            || shouldBlockClick(ev) || shouldCloseMenu(ev);
+            || shouldBlockClick(ev);
     }
 
     @Override
@@ -211,7 +211,7 @@ public class SlidingRootNavLayout extends FrameLayout implements SlidingRootNav 
         if (rootView != null && isMenuOpened()) {
             rootView.getHitRect(tempRect);
             if (tempRect.contains((int) event.getX(), (int) event.getY())) {
-                return true;
+                return shouldCloseMenu(event);
             }
         }
         return false;
@@ -224,8 +224,13 @@ public class SlidingRootNavLayout extends FrameLayout implements SlidingRootNav 
         if (rootView != null && isMenuOpened()) {
             rootView.getHitRect(tempRect);
             if (tempRect.contains((int) event.getX(), (int) event.getY())) {
-                closeMenu();
-                return true;
+                rootView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        closeMenu();
+                    }
+                });
+                return false;
             }
         }
         return false;

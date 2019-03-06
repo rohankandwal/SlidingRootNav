@@ -56,6 +56,8 @@ public class SampleActivity extends AppCompatActivity implements DrawerAdapter.O
                 .withMenuLayout(R.layout.menu_left_drawer)
                 .inject();
 
+        slidingRootNav.getLayout().closeMenuOnContentClick(true);
+
         screenIcons = loadScreenIcons();
         screenTitles = loadScreenTitles();
 
