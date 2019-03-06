@@ -34,6 +34,7 @@ public class SlidingRootNavLayout extends FrameLayout implements SlidingRootNav 
     private boolean isMenuLocked;
     private boolean isMenuHidden;
     private boolean isContentClickableWhenMenuOpened;
+    private boolean shouldCloseMenuOnContentClick;
 
     private RootTransformation rootTransformation;
     private View rootView;
@@ -65,7 +66,7 @@ public class SlidingRootNavLayout extends FrameLayout implements SlidingRootNav 
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         return (!isMenuLocked
             && dragHelper.shouldInterceptTouchEvent(ev))
-            || shouldBlockClick(ev);
+            || shouldBlockClick(ev) || shouldCloseMenu(ev);
     }
 
     @Override
@@ -128,6 +129,11 @@ public class SlidingRootNavLayout extends FrameLayout implements SlidingRootNav 
     }
 
     @Override
+    public boolean isMenuClosingOnContentClick() {
+        return shouldCloseMenuOnContentClick;
+    }
+
+    @Override
     public void closeMenu() {
         closeMenu(true);
     }
@@ -150,6 +156,11 @@ public class SlidingRootNavLayout extends FrameLayout implements SlidingRootNav 
     @Override
     public void setMenuLocked(boolean locked) {
         isMenuLocked = locked;
+    }
+
+    @Override
+    public void closeMenuOnContentClick(boolean shouldClose) {
+        shouldCloseMenuOnContentClick = shouldClose;
     }
 
     public void setRootView(View view) {
@@ -200,6 +211,20 @@ public class SlidingRootNavLayout extends FrameLayout implements SlidingRootNav 
         if (rootView != null && isMenuOpened()) {
             rootView.getHitRect(tempRect);
             if (tempRect.contains((int) event.getX(), (int) event.getY())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean shouldCloseMenu(MotionEvent event) {
+        if (!shouldCloseMenuOnContentClick) {
+            return false;
+        }
+        if (rootView != null && isMenuOpened()) {
+            rootView.getHitRect(tempRect);
+            if (tempRect.contains((int) event.getX(), (int) event.getY())) {
+                closeMenu();
                 return true;
             }
         }

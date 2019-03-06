@@ -12,6 +12,8 @@ public interface SlidingRootNav {
 
     boolean isMenuLocked();
 
+    boolean isMenuClosingOnContentClick();
+
     void closeMenu();
 
     void closeMenu(boolean animated);
@@ -21,6 +23,8 @@ public interface SlidingRootNav {
     void openMenu(boolean animated);
 
     void setMenuLocked(boolean locked);
+
+    void closeMenuOnContentClick(boolean shouldClose);
 
     SlidingRootNavLayout getLayout();
 
